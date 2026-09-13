@@ -1,0 +1,17 @@
+/* src/components/shared/Mascot.css */
+.mascot-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.mascot-avatar {
+  font-size: 2rem;
+}
+.mascot-bubble {
+  background: white;
+  color: #1f104d;
+  padding: 6px 14px;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  font-weight: 800;
+}

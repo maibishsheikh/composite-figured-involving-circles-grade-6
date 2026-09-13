@@ -1,0 +1,43 @@
+/* src/components/phases/WonderPhase.css */
+.wonder-wrap {
+  flex: 1;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.wonder-content {
+  width: 100%;
+  max-width: 660px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.wonder-card {
+  width: 100%;
+  padding: clamp(14px, 2vh, 22px) clamp(16px, 2.5vw, 28px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: clamp(8px, 1.2vh, 12px);
+  box-sizing: border-box;
+  background: rgba(26, 17, 60, 0.88);
+  border: 1.5px solid rgba(130, 95, 225, 0.28);
+  border-radius: var(--radius-lg, 20px);
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(20px);
+}

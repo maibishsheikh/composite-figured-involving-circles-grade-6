@@ -1,0 +1,47 @@
+/* src/components/quiz/QuestionRenderer.css */
+.qr-wrap {
+  width: 100%;
+  max-width: 740px;
+  margin: 0 auto;
+  padding: clamp(12px, 2vw, 20px) clamp(14px, 2vw, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.4vh, 14px);
+  box-sizing: border-box;
+  background: rgba(24, 14, 60, 0.92);
+  border: 1.5px solid rgba(124, 77, 255, 0.35);
+  border-radius: var(--radius-lg, 20px);
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.45);
+}
+
+.qr-category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  background: rgba(255, 179, 0, 0.15);
+  border: 1.5px solid rgba(255, 179, 0, 0.4);
+  color: var(--gold, #ffb800);
+  padding: 4px 14px;
+  border-radius: var(--radius-pill, 9999px);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.qr-question {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 1.8vw, 1.5rem);
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.qr-visual {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
