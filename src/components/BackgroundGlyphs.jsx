@@ -1,6 +1,6 @@
 import React from 'react';
 
-const GLYPHS = ['⭕', '◐', '◔', 'π', 'r', 'd', 'C', 'A', '3.14', '22/7', 'r²', '2πr'];
+const GLYPHS = ['⭕', '◐', '◔', 'π', 'r', 'd', 'C', 'A', '3.14', '22/7', 'r²', '2πr', 'd = 2r', '360°', 'C = 2πr'];
 
 export function BackgroundGlyphs() {
   return (

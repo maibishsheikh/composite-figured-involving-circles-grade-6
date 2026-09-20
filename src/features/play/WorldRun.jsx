@@ -8,16 +8,16 @@ import { ArrowLeft, Star, Flame, Heart } from 'lucide-react';
 import { playAudio, stopAudio } from '../../utils/audio.js';
 
 const WORLD_NAMES = {
-  1: "Round Table Yard",
-  2: "Garden Path Grove",
-  3: "Wheel Works",
-  4: "Pizza Palace",
-  5: "Window Wonderland",
-  6: "Coin Cove",
-  7: "Raceway Track",
-  8: "Clock Tower City",
-  9: "Word Problem Woods",
-  10: "Challenge Colosseum"
+  1: "Bicycle Wheels",
+  2: "Pizza Planet",
+  3: "Clockwork Tower",
+  4: "Ferris Wheel",
+  5: "Track & Field",
+  6: "Coin Vault",
+  7: "Sunken Plate Reef",
+  8: "Flower Bed Garden",
+  9: "Orbiting Satellites",
+  10: "Golden Medals"
 };
 
 const WORLD_INTRO_TEXTS = {

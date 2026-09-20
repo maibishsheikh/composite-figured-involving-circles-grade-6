@@ -3,11 +3,11 @@ import { useProgress } from '../state/ProgressContext.jsx';
 import { stopAudio } from '../utils/audio.js';
 
 const PHASES = [
-  { key: 'wonder',   num: '01', icon: '✨', label: 'Wonder'   },
+  { key: 'wonder',   num: '01', icon: '🔍', label: 'Wonder'   },
   { key: 'story',    num: '02', icon: '📖', label: 'Story'    },
-  { key: 'simulate', num: '03', icon: '🧪', label: 'Simulate' },
-  { key: 'practice', num: '04', icon: '💡', label: 'Practice' },
-  { key: 'reflect',  num: '05', icon: '🎓', label: 'Reflect'  },
+  { key: 'simulate', num: '03', icon: '✏️', label: 'Simulate' },
+  { key: 'practice', num: '04', icon: '🎮', label: 'Practice' },
+  { key: 'reflect',  num: '05', icon: '📝', label: 'Reflect'  },
 ];
 
 const PHASE_ORDER = ['landing', 'wonder', 'story', 'simulate', 'practice', 'reflect'];
