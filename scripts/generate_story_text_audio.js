@@ -2,7 +2,19 @@ import fs from 'fs';
 import path from 'path';
 import { AUDIO_MAP } from '../src/utils/audioMap.js';
 
-const ELEVENLABS_API_KEY = 'sk_0af55b573c54fe31387443150c45624fed865ccc914cd486';
+function getApiKey() {
+  if (process.env.VITE_ELEVENLABS_API_KEY) return process.env.VITE_ELEVENLABS_API_KEY.trim();
+  if (process.env.ELEVENLABS_API_KEY) return process.env.ELEVENLABS_API_KEY.trim();
+  const envLocalPath = path.join(process.cwd(), '.env.local');
+  if (fs.existsSync(envLocalPath)) {
+    const content = fs.readFileSync(envLocalPath, 'utf8');
+    const match = content.match(/VITE_ELEVENLABS_API_KEY\s*=\s*(.+)/);
+    if (match) return match[1].trim().replace(/^["']|["']$/g, '');
+  }
+  return 'sk_0af55b573c54fe31387443150c45624fed865ccc914cd486';
+}
+
+const ELEVENLABS_API_KEY = getApiKey();
 const VOICE_ID = 'Xb7hH8MSUJpSbSDYk0k2';
 const MODEL_ID = 'eleven_multilingual_v2';
 

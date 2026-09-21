@@ -3,7 +3,19 @@ import path from 'path';
 import crypto from 'crypto';
 import { generateWorldQuestions } from '../src/core/questions/generateWorld.js';
 
-const ELEVENLABS_API_KEY = 'sk_0af55b573c54fe31387443150c45624fed865ccc914cd486';
+function getApiKey() {
+  if (process.env.VITE_ELEVENLABS_API_KEY) return process.env.VITE_ELEVENLABS_API_KEY.trim();
+  if (process.env.ELEVENLABS_API_KEY) return process.env.ELEVENLABS_API_KEY.trim();
+  const envLocalPath = path.join(process.cwd(), '.env.local');
+  if (fs.existsSync(envLocalPath)) {
+    const content = fs.readFileSync(envLocalPath, 'utf8');
+    const match = content.match(/VITE_ELEVENLABS_API_KEY\s*=\s*(.+)/);
+    if (match) return match[1].trim().replace(/^["']|["']$/g, '');
+  }
+  return 'sk_0af55b573c54fe31387443150c45624fed865ccc914cd486';
+}
+
+const ELEVENLABS_API_KEY = getApiKey();
 const VOICE_ID = 'Xb7hH8MSUJpSbSDYk0k2';
 const MODEL_ID = 'eleven_multilingual_v2';
 
@@ -109,6 +121,7 @@ const STORY_SLIDES = [
 STORY_SLIDES.forEach(s => {
   const combined = `${s.question} ${s.storyText}`;
   phrases.push({ key: `story_${s.slideNumber}_combined`, text: combined });
+  phrases.push({ key: `story_${s.slideNumber}_pure`, text: s.storyText });
   phrases.push({ key: `story_${s.slideNumber}_q`, text: s.question });
   phrases.push({ key: `story_${s.slideNumber}_f`, text: s.factBubble });
 });
@@ -168,23 +181,35 @@ async function generateSpeech(rawText, filename) {
 
   console.log(`[GENERATING ALICE VOICE] ${filename} -> "${speechText.substring(0, 40)}..."`);
   try {
-    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'xi-api-key': ELEVENLABS_API_KEY
-      },
-      body: JSON.stringify({
-        text: speechText,
-        model_id: MODEL_ID,
-        voice_settings: {
-          stability: 0.40,
-          similarity_boost: 0.80,
-          style: 0.35,
-          use_speaker_boost: true
-        }
-      })
-    });
+    let attempts = 0;
+    let response;
+    while (attempts < 3) {
+      attempts++;
+      response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'xi-api-key': ELEVENLABS_API_KEY
+        },
+        body: JSON.stringify({
+          text: speechText,
+          model_id: MODEL_ID,
+          voice_settings: {
+            stability: 0.40,
+            similarity_boost: 0.80,
+            style: 0.35,
+            use_speaker_boost: true
+          }
+        })
+      });
+
+      if (response.status === 429) {
+        console.warn(`[RATE LIMIT 429] Waiting 3 seconds before retry (attempt ${attempts}/3)...`);
+        await new Promise(r => setTimeout(r, 3000));
+        continue;
+      }
+      break;
+    }
 
     if (!response.ok) {
       const errText = await response.text();
@@ -205,7 +230,27 @@ async function generateSpeech(rawText, filename) {
 
 async function main() {
   console.log(`Total phrases to process: ${phrases.length}`);
-  const audioMap = {};
+  const mapPath = path.join(process.cwd(), 'src', 'utils', 'audioMap.js');
+  let audioMap = {};
+  if (fs.existsSync(mapPath)) {
+    try {
+      const content = fs.readFileSync(mapPath, 'utf8');
+      const jsonMatch = content.match(/export const AUDIO_MAP = ({[\s\S]*?});/);
+      if (jsonMatch) {
+        audioMap = JSON.parse(jsonMatch[1]);
+      }
+    } catch (e) {
+      console.warn('Could not parse existing audioMap.js, starting fresh map');
+    }
+  }
+
+  const saveMap = () => {
+    const fileContent = `// Auto-generated Audio Map with Alice Voice ID
+export const AUDIO_MAP = ${JSON.stringify(audioMap, null, 2)};
+`;
+    fs.writeFileSync(mapPath, fileContent);
+  };
+
   let successCount = 0;
 
   for (let i = 0; i < phrases.length; i++) {
@@ -219,18 +264,18 @@ async function main() {
       audioMap[item.text] = url;
       successCount++;
     }
+
+    // Save incrementally every 10 items
+    if (i % 10 === 0) {
+      saveMap();
+    }
     
     // Small delay between requests to be gentle on rate limits
     await new Promise(r => setTimeout(r, 120));
   }
 
-  // Write audioMap.js
-  const mapPath = path.join(process.cwd(), 'src', 'utils', 'audioMap.js');
-  const fileContent = `// Auto-generated Audio Map with Alice Voice ID
-export const AUDIO_MAP = ${JSON.stringify(audioMap, null, 2)};
-`;
-
-  fs.writeFileSync(mapPath, fileContent);
+  // Final save
+  saveMap();
   console.log(`\n========================================`);
   console.log(`[DONE] Processed ${successCount}/${phrases.length} audio files with phonetically cleaned ALICE Voice ID.`);
   console.log(`[DONE] Saved mapping file to ${mapPath}`);
